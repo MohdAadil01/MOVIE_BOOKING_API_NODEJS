@@ -1,0 +1,22 @@
+{
+  "name": "movie_booking_api_nodejs",
+  "version": "1.0.0",
+  "description": "movie booking application api using node js",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "tsc -b && node dist/index.js",
+    "dev": "node dist/index.js"
+  },
+  "dependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.6",
+    "@types/mongoose": "^5.11.96",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongoose": "^9.0.1"
+  }
+}
