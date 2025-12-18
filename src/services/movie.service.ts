@@ -12,9 +12,17 @@ export const createMovieService = async (data: CreateMovieInput) => {
 
   const movie = await Movie.create(data);
 
-  return ApiResponse.success({
-    statusCode: 201,
-    message: "Movie created Successfully",
-    data: movie,
-  });
+  return movie;
+};
+
+export const findMovieByTitleService = async (title: string) => {
+  if (!title) {
+    throw new AppError("Name is not provided", 400);
+  }
+  const movie = await Movie.findOne({ title });
+
+  if (!movie) {
+    throw new AppError("Movie is not available", 404);
+  }
+  return movie;
 };
