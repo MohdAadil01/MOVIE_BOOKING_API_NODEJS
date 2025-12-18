@@ -38,3 +38,5 @@ export const createMovieSchema = z.object({
   }),
   releaseStatus: z.enum(["Upcoming", "Now Showing"]).optional(),
 });
+
+export type CreateMovieInput = z.infer<typeof createMovieSchema>;
