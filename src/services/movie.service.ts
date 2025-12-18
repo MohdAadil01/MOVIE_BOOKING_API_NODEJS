@@ -15,11 +15,11 @@ export const createMovieService = async (data: CreateMovieInput) => {
   return movie;
 };
 
-export const findMovieByTitleService = async (title: string) => {
-  if (!title) {
-    throw new AppError("Name is not provided", 400);
+export const findMovieByIdService = async (id: string) => {
+  if (!id) {
+    throw new AppError("Id not provided", 400);
   }
-  const movie = await Movie.findOne({ title });
+  const movie = await Movie.findById(id);
 
   if (!movie) {
     throw new AppError("Movie is not available", 404);
@@ -33,4 +33,17 @@ export const findAllMoviesService = async () => {
     throw new AppError("Nothing available here", 404);
   }
   return allMovies;
+};
+
+export const deleteMovieService = async (id: string) => {
+  if (!id) {
+    throw new AppError("Id not provided", 400);
+  }
+  const movie = await Movie.findById(id);
+  if (!movie) {
+    throw new AppError("Movie not found", 404);
+  }
+  await movie.deleteOne();
+
+  return movie;
 };

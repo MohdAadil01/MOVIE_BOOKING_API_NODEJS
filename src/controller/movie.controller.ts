@@ -4,8 +4,9 @@ import { ApiResponse } from "../utils/apiResponse";
 import { createMovieSchema } from "../validators/movie.validatior";
 import {
   createMovieService,
+  deleteMovieService,
   findAllMoviesService,
-  findMovieByTitleService,
+  findMovieByIdService,
 } from "../services/movie.service";
 
 // !only client should be able to create a movie
@@ -29,11 +30,18 @@ export const updateMovie = async (req: Request, res: Response) => {
   });
 };
 
-export const deleteMovie = async (req: Request, res: Response) => {
-  res.status(200).json({
-    message: "created",
-  });
-};
+export const deleteMovie = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const movie = await deleteMovieService(id);
+
+  return res.status(200).json(
+    ApiResponse.success({
+      statusCode: 200,
+      message: "Deleted movie successfully",
+      data: movie,
+    })
+  );
+});
 
 export const getAllMovies = asyncHandler(
   async (req: Request, res: Response) => {
@@ -51,9 +59,9 @@ export const getAllMovies = asyncHandler(
 
 export const getSingleMovie = asyncHandler(
   async (req: Request, res: Response) => {
-    const { name } = req.params;
+    const { id } = req.params;
 
-    const movie = await findMovieByTitleService(name);
+    const movie = await findMovieByIdService(id);
 
     return res.status(200).json(
       ApiResponse.success({
