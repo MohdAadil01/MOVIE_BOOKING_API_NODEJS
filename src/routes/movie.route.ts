@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { dummy } from "../controller/movie.controller";
+import { createMovie } from "../controller/movie.controller";
 
 const router = Router();
 
-router.get("/", dummy);
+router.post("/create", createMovie);
 
 export default router;
