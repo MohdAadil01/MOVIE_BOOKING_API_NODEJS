@@ -26,3 +26,11 @@ export const findMovieByTitleService = async (title: string) => {
   }
   return movie;
 };
+
+export const findAllMoviesService = async () => {
+  const allMovies = await Movie.find({});
+  if (allMovies.length === 0) {
+    throw new AppError("Nothing available here", 404);
+  }
+  return allMovies;
+};
