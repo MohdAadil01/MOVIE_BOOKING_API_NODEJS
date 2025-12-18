@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler";
 import { ApiResponse } from "../utils/apiResponse";
-import { createMovieSchema } from "../validators/movie.validatior";
+import {
+  createMovieSchema,
+  updateMovieSchema,
+} from "../validators/movie.validatior";
 import {
   createMovieService,
   deleteMovieService,
   findAllMoviesService,
   findMovieByIdService,
+  updateMovieService,
 } from "../services/movie.service";
 
 // !only client should be able to create a movie
@@ -24,11 +28,21 @@ export const createMovie = asyncHandler(async (req: Request, res: Response) => {
   );
 });
 
-export const updateMovie = async (req: Request, res: Response) => {
-  res.status(200).json({
-    message: "created",
-  });
-};
+export const updateMovie = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const parsedBody = updateMovieSchema.parse(req.body);
+
+  const movie = await updateMovieService(id, parsedBody);
+
+  return res.status(200).json(
+    ApiResponse.success({
+      statusCode: 200,
+      message: "Updated movie successfully",
+      data: movie,
+    })
+  );
+});
 
 export const deleteMovie = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;

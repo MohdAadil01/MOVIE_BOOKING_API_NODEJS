@@ -1,7 +1,9 @@
 import { Movie } from "../models/movie.model";
-import { ApiResponse } from "../utils/apiResponse";
 import { AppError } from "../utils/appError";
-import { CreateMovieInput } from "../validators/movie.validatior";
+import {
+  CreateMovieInput,
+  UpdateMovieInput,
+} from "../validators/movie.validatior";
 
 export const createMovieService = async (data: CreateMovieInput) => {
   const existingMovie = await Movie.findOne({ title: data.title });
@@ -45,5 +47,19 @@ export const deleteMovieService = async (id: string) => {
   }
   await movie.deleteOne();
 
+  return movie;
+};
+
+export const updateMovieService = async (
+  id: string,
+  data: UpdateMovieInput
+) => {
+  const movie = await Movie.findByIdAndUpdate(id, data, {
+    new: true,
+    runValidators: true,
+  });
+  if (!movie) {
+    throw new AppError("Movie not found", 404);
+  }
   return movie;
 };

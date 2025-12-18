@@ -39,4 +39,38 @@ export const createMovieSchema = z.object({
   releaseStatus: z.enum(["Upcoming", "Now Showing"]).optional(),
 });
 
+export const updateMovieSchema = z.object({
+  language: z.string().optional(),
+
+  releaseStatus: z.enum(["Upcoming", "Now Showing"]).optional(),
+
+  urls: z
+    .object({
+      posterUrl: z.string().url().optional(),
+      trailerUrl: z.string().url().optional(),
+    })
+    .optional(),
+
+  description: z.string().min(10).optional(),
+
+  genres: z
+    .array(
+      z.enum([
+        "Action",
+        "Comedy",
+        "Drama",
+        "Romance",
+        "Thriller",
+        "Horror",
+        "Sci-Fi",
+        "Fantasy",
+        "Animation",
+        "Documentary",
+      ])
+    )
+    .min(1)
+    .optional(),
+});
+
 export type CreateMovieInput = z.infer<typeof createMovieSchema>;
+export type UpdateMovieInput = z.infer<typeof updateMovieSchema>;
