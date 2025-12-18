@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import asyncHandler from "../utils/asyncHandler";
+import { ApiResponse } from "../utils/apiResponse";
 
 // !only client shouod be able to create a movie
 export const createMovie = async (req: Request, res: Response) => {
@@ -6,15 +8,13 @@ export const createMovie = async (req: Request, res: Response) => {
     title,
     description,
     genres,
+    language,
     duration,
     releaseDate,
-    certification,
-    director,
     cast,
-    posterUrl,
-    bannerUrl,
-    trailerUrl,
+    urls,
     rating,
+    releaseStatus,
   } = req.body;
 
   res.status(200).json({

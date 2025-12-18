@@ -52,17 +52,6 @@ const movieSchema = new Schema(
       index: true,
     },
 
-    certification: {
-      type: String,
-      enum: ["U", "UA", "A", "S"],
-      required: true,
-    },
-
-    director: {
-      type: String,
-      trim: true,
-    },
-
     cast: [
       {
         name: { type: String, required: true },
@@ -70,20 +59,16 @@ const movieSchema = new Schema(
       },
     ],
 
-    posterUrl: {
-      type: String,
-      required: true,
-      match: /^https?:\/\/.+/,
-    },
-
-    bannerUrl: {
-      type: String,
-      match: /^https?:\/\/.+/,
-    },
-
-    trailerUrl: {
-      type: String,
-      match: /^https?:\/\/.+/,
+    urls: {
+      posterUrl: {
+        type: String,
+        required: true,
+        match: /^https?:\/\/.+/,
+      },
+      trailerUrl: {
+        type: String,
+        match: /^https?:\/\/.+/,
+      },
     },
 
     rating: {
@@ -98,17 +83,11 @@ const movieSchema = new Schema(
         default: 0,
       },
     },
-
     releaseStatus: {
       type: String,
       enum: ["Upcoming", "Now Showing"],
       default: "Upcoming",
       index: true,
-    },
-
-    isActive: {
-      type: Boolean,
-      default: true,
     },
   },
   {
