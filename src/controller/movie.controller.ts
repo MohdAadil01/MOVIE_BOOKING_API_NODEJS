@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/apiResponse";
 import {
   createMovieSchema,
   updateMovieSchema,
-} from "../validators/movie.validatior";
+} from "../validators/movie.validator";
 import {
   createMovieService,
   deleteMovieService,

@@ -3,7 +3,7 @@ import { AppError } from "../utils/appError";
 import {
   CreateMovieInput,
   UpdateMovieInput,
-} from "../validators/movie.validatior";
+} from "../validators/movie.validator";
 
 export const createMovieService = async (data: CreateMovieInput) => {
   const existingMovie = await Movie.findOne({ title: data.title });
