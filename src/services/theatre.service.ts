@@ -79,7 +79,7 @@ export const getSingleTheatreService = async (id: string) => {
 export const getAllTheatreService = async () => {
   const cacheKey = `theatres:all`;
   const cachedTheatres = await getCache(cacheKey);
-  if (cacheKey) {
+  if (cachedTheatres) {
     return cachedTheatres;
   }
 
