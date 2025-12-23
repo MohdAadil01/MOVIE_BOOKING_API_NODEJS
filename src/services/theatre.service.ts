@@ -1,8 +1,10 @@
+import { Types } from "mongoose";
 import { Theatre, TypeTheatre } from "../models/theatre.model";
 import { AppError } from "../utils/appError";
 import { deleteCache, getCache, setCache } from "../utils/cache";
 import {
   CreateTheatreInput,
+  createTheatreSchema,
   UpdateTheatreInput,
 } from "../validators/theatre.validator";
 
@@ -97,41 +99,44 @@ export const updateTheatreMoviesService = async ({
   theatreId,
   insert,
 }: {
-  movies: [];
-  theatreId: String;
+  movies: string[];
+  theatreId: string;
   insert: boolean;
 }) => {
-  if (movies.length == 0 || !theatreId || insert == null) {
+  if (
+    movies.length == 0 ||
+    !theatreId ||
+    insert == null ||
+    !Array.isArray(movies)
+  ) {
     throw new AppError("Pleave provide all the required fields", 400);
   }
 
-  await deleteCache(`theatres:id:${theatreId}`);
-  await deleteCache(`theatres:all`);
-  if (insert) {
-    const theatre = await Theatre.findByIdAndUpdate(
-      theatreId,
-      {
-        $addToSet: {
-          nowShowing: {
-            $each: movies,
-          },
-        },
-      },
-      { new: true }
-    );
-    return theatre?.populate("nowShowing");
-  } else {
-    const theatre = await Theatre.findByIdAndUpdate(
-      theatreId,
-      {
-        $pull: {
-          nowShowing: {
-            $in: movies,
-          },
-        },
-      },
-      { new: true }
-    );
-    return theatre?.populate("nowShowing");
+  if (!Types.ObjectId.isValid(theatreId)) {
+    throw new AppError("Invalid theatre id", 400);
   }
+
+  const moviesId = movies.map((movie_id) => {
+    if (!Types.ObjectId.isValid(movie_id)) {
+      throw new AppError(`Invalid movie id: ${movie_id}`, 400);
+    }
+    return new Types.ObjectId(movie_id);
+  });
+
+  const updatedQuery = insert
+    ? { $addToSet: { nowShowing: { $each: moviesId } } }
+    : { $pull: { nowShowing: { $in: moviesId } } };
+
+  const theatre = await Theatre.findByIdAndUpdate(theatreId, updatedQuery, {
+    new: true,
+  }).populate("nowShowing");
+  if (!theatre) {
+    throw new AppError("Theatre not found", 404);
+  }
+  await Promise.all([
+    deleteCache(`theatres:id:${theatreId}`),
+    deleteCache(`theatres:all`),
+  ]);
+
+  return theatre;
 };
