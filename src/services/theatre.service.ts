@@ -1,4 +1,4 @@
-import { Theatre } from "../models/theatre.model";
+import { Theatre, TypeTheatre } from "../models/theatre.model";
 import { AppError } from "../utils/appError";
 import { deleteCache, getCache, setCache } from "../utils/cache";
 import {
@@ -90,4 +90,48 @@ export const getAllTheatreService = async () => {
 
   await setCache(cacheKey, theatres, 900);
   return theatres;
+};
+
+export const updateTheatreMoviesService = async ({
+  movies,
+  theatreId,
+  insert,
+}: {
+  movies: [];
+  theatreId: String;
+  insert: boolean;
+}) => {
+  if (movies.length == 0 || !theatreId || insert == null) {
+    throw new AppError("Pleave provide all the required fields", 400);
+  }
+
+  await deleteCache(`theatres:id:${theatreId}`);
+  await deleteCache(`theatres:all`);
+  if (insert) {
+    const theatre = await Theatre.findByIdAndUpdate(
+      theatreId,
+      {
+        $addToSet: {
+          nowShowing: {
+            $each: movies,
+          },
+        },
+      },
+      { new: true }
+    );
+    return theatre?.populate("nowShowing");
+  } else {
+    const theatre = await Theatre.findByIdAndUpdate(
+      theatreId,
+      {
+        $pull: {
+          nowShowing: {
+            $in: movies,
+          },
+        },
+      },
+      { new: true }
+    );
+    return theatre?.populate("nowShowing");
+  }
 };

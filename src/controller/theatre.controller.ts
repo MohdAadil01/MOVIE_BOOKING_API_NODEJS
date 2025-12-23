@@ -9,9 +9,12 @@ import {
   deleteTheatreService,
   getAllTheatreService,
   getSingleTheatreService,
+  updateTheatreMoviesService,
   updateTheatreService,
 } from "../services/theatre.service";
 import { ApiResponse } from "../utils/apiResponse";
+import { Theatre } from "../models/theatre.model";
+import { AppError } from "../utils/appError";
 
 export const createTheatre = asyncHandler(
   async (req: Request, res: Response) => {
@@ -82,6 +85,24 @@ export const getAllTheatre = asyncHandler(
         statusCode: 200,
         message: "Fetched successfully",
         data: theatres,
+      })
+    );
+  }
+);
+
+export const updateTheatreMovies = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { movies, theatreId, insert } = req.body;
+    const data = await updateTheatreMoviesService({
+      movies,
+      theatreId,
+      insert,
+    });
+    return res.status(200).json(
+      ApiResponse.success({
+        statusCode: 200,
+        message: "Updated movies in theatre",
+        data: data,
       })
     );
   }

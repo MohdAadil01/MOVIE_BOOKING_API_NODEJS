@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema, InferSchemaType } from "mongoose";
 
 const theatreSchema = new Schema(
   {
@@ -32,10 +32,17 @@ const theatreSchema = new Schema(
       required: true,
       trim: true,
     },
+    nowShowing: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Movie",
+      },
+    ],
   },
   { timestamps: true }
 );
 
 theatreSchema.index({ name: 1, city: 1 }, { unique: true });
+export type TypeTheatre = InferSchemaType<typeof theatreSchema>;
 
 export const Theatre = model("Theatre", theatreSchema);

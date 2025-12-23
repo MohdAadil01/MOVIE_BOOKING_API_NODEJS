@@ -5,6 +5,7 @@ import {
   getAllTheatre,
   getSingleTheatre,
   updateTheatre,
+  updateTheatreMovies,
 } from "../controller/theatre.controller";
 import { rateLimiter } from "../middleware/rateLimiter.middleware";
 const router = Router();
@@ -28,6 +29,11 @@ router.get(
   "/",
   rateLimiter({ windowSeconds: 60, maxRequests: 100 }),
   getAllTheatre
+);
+router.put(
+  "/update-movies",
+  rateLimiter({ windowSeconds: 60, maxRequests: 15 }),
+  updateTheatreMovies
 );
 router.put(
   "/:id",
