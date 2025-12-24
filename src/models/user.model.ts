@@ -1,6 +1,5 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
-import { AppError } from "../utils/appError";
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) || 8;
 
@@ -19,6 +18,8 @@ const userSchema = new Schema(
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         "Please fill a valid email",
       ],
+      trim: true,
+      lowercase: true,
     },
     password: {
       type: String,
