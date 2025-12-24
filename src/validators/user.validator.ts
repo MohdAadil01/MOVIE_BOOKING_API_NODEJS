@@ -1,8 +1,6 @@
-import z from "zod";
-
 import { z } from "zod";
 
-export const createUserSchema = z.object({
+export const createUserSchemaInput = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().trim().toLowerCase().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -10,7 +8,7 @@ export const createUserSchema = z.object({
   status: z.enum(["approved", "rejected", "pending"]).optional(),
 });
 
-export const updateUserSchema = z
+export const updateUserSchemaInput = z
   .object({
     name: z.string().min(2).optional(),
     email: z.string().trim().toLowerCase().email().optional(),
@@ -22,42 +20,5 @@ export const updateUserSchema = z
     message: "At least one field is required to update",
   });
 
-//   {
-//     name: {
-//       type: String,
-//       required: true,
-//       minLength: 2,
-//     },
-//     email: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       match: [
-//         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-//         "Please fill a valid email",
-//       ],
-//     },
-//     password: {
-//       type: String,
-//       required: true,
-//       minLength: 6,
-//       select: false,
-//     },
-//     role: {
-//       type: String,
-//       required: true,
-//       enum: {
-//         values: ["admin", "client", "customer"],
-//         message: "Invalid status for given user",
-//       },
-//       default: "customer",
-//     },
-//     status: {
-//       type: String,
-//       required: true,
-//       enum: {
-//         values: ["approved", "rejected", "pending"],
-//       },
-//       default: "pending",
-//     },
-//   },
+export type TypeCreateUserSchemaInput = z.infer<typeof createUserSchemaInput>;
+export type TypeUpdateUserSchemaInput = z.infer<typeof updateUserSchemaInput>;
