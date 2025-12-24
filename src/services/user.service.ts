@@ -7,13 +7,13 @@ import {
 } from "../validators/user.validator";
 
 export const createUserService = async (data: TypeCreateUserSchemaInput) => {
-  const existingUser = await User.findById(data.email);
+  const existingUser = await User.findOne({ email: data.email });
   if (existingUser) {
     throw new AppError("Email already exists", 400);
   }
   const user = await User.create(data);
 
-  await deleteCache(`users:id:all`);
+  await deleteCache(`users:all`);
 
   return user;
 };
@@ -26,13 +26,16 @@ export const updateUserService = async (
     throw new AppError("Provide Id please", 400);
   }
 
-  const user = await User.findByIdAndUpdate(id, data, { new: true });
+  const user = await User.findByIdAndUpdate(id, data, {
+    new: true,
+    select: "-password",
+  }).lean();
   if (!user) {
     throw new AppError("User doesn't exist.", 404);
   }
 
   await deleteCache(`users:id:${id}`);
-  await deleteCache(`users:id:all`);
+  await deleteCache(`users:all`);
 
   return user;
 };
@@ -47,7 +50,7 @@ export const deleteUserService = async (id: string) => {
     throw new AppError("User doesn't exist.", 404);
   }
   await deleteCache(`users:id:${id}`);
-  await deleteCache(`users:id:all`);
+  await deleteCache(`users:all`);
   return user;
 };
 
@@ -60,21 +63,22 @@ export const getSingleUserService = async (id: string) => {
   if (cachedUser) {
     return cachedUser;
   }
-  const user = await User.findById(id);
+  const user = await User.findById(id).select("-password").lean();
   if (!user) {
     throw new AppError("User doesn't exist.", 404);
   }
-  setCache(cachedUser, user, 900);
+  await setCache(cacheKey, user, 900);
   return user;
 };
 
 export const getAllUserService = async () => {
-  const cachedKey = `users:id:all`;
+  const cachedKey = `users:all`;
   const cachedUsers = await getCache(cachedKey);
   if (cachedUsers) {
     return cachedUsers;
   }
-  const users = await User.find({});
+  const users = await User.find({}).select("-password").lean();
+
   if (users.length === 0) {
     throw new AppError("No user available", 404);
   }
