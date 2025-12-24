@@ -44,7 +44,7 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(
     ApiResponse.success({
       statusCode: 200,
-      message: "Successfully delted",
+      message: "Successfully deleted",
       data: user,
     })
   );

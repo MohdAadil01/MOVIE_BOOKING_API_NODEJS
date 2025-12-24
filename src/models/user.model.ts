@@ -35,6 +35,7 @@ const userSchema = new Schema(
         message: "Invalid status for given user",
       },
       default: "customer",
+      lowercase: true,
     },
     status: {
       type: String,
@@ -43,6 +44,7 @@ const userSchema = new Schema(
         values: ["approved", "rejected", "pending"],
       },
       default: "pending",
+      lowercase: true,
     },
   },
   { timestamps: true }
