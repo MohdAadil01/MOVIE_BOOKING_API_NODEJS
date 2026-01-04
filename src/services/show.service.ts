@@ -1,4 +1,7 @@
+import mongoose from "mongoose";
+import { Movie } from "../models/movie.model";
 import { Show } from "../models/show.model";
+import { Theatre } from "../models/theatre.model";
 import { AppError } from "../utils/appError";
 import { deleteCache, getCache, setCache } from "../utils/cache";
 import {
@@ -7,7 +10,24 @@ import {
 } from "../validators/show.validator";
 
 export const addShowService = async (inputData: AddShowInputType) => {
-  const show = await Show.find(inputData);
+  if (
+    !mongoose.Types.ObjectId.isValid(inputData.movieId) ||
+    !mongoose.Types.ObjectId.isValid(inputData.theatreId)
+  ) {
+    throw new AppError("Invalid id", 400);
+  }
+  const movieExists = await Movie.findById(inputData.movieId);
+  if (!movieExists) throw new AppError("Movie doesn't exists", 404);
+  const theatreExists = await Theatre.findById(inputData.theatreId);
+  if (!theatreExists) throw new AppError("Theatre doesn't exists", 404);
+
+  const existingShow = await Show.findOne({
+    movieId: inputData.movieId,
+    theatreId: inputData.theatreId,
+    startTime: inputData.startTime,
+  });
+  if (existingShow) throw new AppError("Show already present", 400);
+  const show = await Show.create(inputData);
   await deleteCache(`shows:all`);
   return show;
 };
@@ -34,6 +54,7 @@ export const updateShowService = async (
   const updatedShow = await Show.findByIdAndUpdate(id, inputData, {
     new: true,
   });
+
   await deleteCache(`shows:id:${id}`);
   await deleteCache(`shows:all`);
   return updatedShow;
@@ -58,7 +79,7 @@ export const getShowService = async (id: string) => {
   if (!id) {
     throw new AppError("ID not provided", 404);
   }
-  const cacheKey = `shows:id${id}`;
+  const cacheKey = `shows:id:${id}`;
   const cachedShow = await getCache(cacheKey);
   if (cachedShow) return cachedShow;
 

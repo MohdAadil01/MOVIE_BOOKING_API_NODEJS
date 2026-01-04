@@ -18,7 +18,7 @@ import { ApiResponse } from "../utils/apiResponse";
 
 export const addShow = asyncHandler(async (req: Request, res: Response) => {
   const parsedBody = addShowSchema.parse(req.body);
-  const show = addShowService(parsedBody);
+  const show = await addShowService(parsedBody);
 
   return res.status(201).json(
     ApiResponse.success({
