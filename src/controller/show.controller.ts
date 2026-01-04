@@ -6,9 +6,10 @@
 
 import { Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler";
-import { addShowSchema } from "../validators/show.validator";
+import { addShowSchema, updateShowSchema } from "../validators/show.validator";
 import {
   addShowService,
+  deleteShowService,
   getShowService,
   getShowsService,
   updateShowService,
@@ -30,7 +31,8 @@ export const addShow = asyncHandler(async (req: Request, res: Response) => {
 
 export const updateShow = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const show = await updateShowService(id);
+  const parsedBody = updateShowSchema.parse(req.body);
+  const show = await updateShowService(parsedBody, id);
 
   return res.status(200).json(
     ApiResponse.success({
@@ -66,6 +68,15 @@ export const getShows = asyncHandler(async (req: Request, res: Response) => {
   );
 });
 
-export const deleteShow = asyncHandler(
-  async (req: Request, res: Response) => {}
-);
+export const deleteShow = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const show = await deleteShowService(id);
+
+  return res.status(200).json(
+    ApiResponse.success({
+      statusCode: 200,
+      message: "Deleted show",
+      data: show,
+    })
+  );
+});
