@@ -11,4 +11,11 @@ export const addShowSchema = z.object({
     .positive("Total Seats must be a positive integer"),
 });
 
-export type AddShowSchemaType = z.infer<typeof addShowSchema>;
+export const updateShowSchema = z.object({
+  startTime: z.coerce.date().optional(),
+  price: z.number().int().positive().optional(),
+  totalSeats: z.number().int().positive().optional(),
+});
+
+export type AddShowInputType = z.infer<typeof addShowSchema>;
+export type UpdateShowInputType = z.infer<typeof updateShowSchema>;
